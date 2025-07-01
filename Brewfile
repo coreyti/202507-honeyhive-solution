@@ -1,4 +1,7 @@
 brew 'direnv'
 brew 'docker'
+brew 'docker-buildx'
 brew 'docker-compose'
+brew 'kubectl'
+brew 'minikube'
 brew 'mise'

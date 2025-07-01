@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: llm-evaluation-config
+  namespace: 20250701-honeyhive-solution
+data:
+  MAX_PAYLOAD_SIZE: "1048576"
+  MIN_PAYLOAD_SIZE: "1024"
+  RATE_LIMIT_PER_MINUTE: "100"
+  CIRCUIT_BREAKER_THRESHOLD: "5"
+  CIRCUIT_BREAKER_TIMEOUT: "30"
+  LOG_LEVEL: "INFO"
+  DEBUG: "false"
+  LLM_TIMEOUT: "60"
+  MAX_RETRIES: "3"

@@ -1,0 +1,5 @@
+#!/bin/bash
+set -euo pipefail
+
+# Apply all kubernetes manifests
+kubectl apply -f "${REPO}/etc/k8s/"

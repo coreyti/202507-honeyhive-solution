@@ -1,0 +1,97 @@
+---
+# application deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-evaluation-service
+  namespace: 20250701-honeyhive-solution
+  labels:
+    app: llm-evaluation-service
+    version: v1
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: llm-evaluation-service
+  template:
+    metadata:
+      labels:
+        app: llm-evaluation-service
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: evaluation-service
+        image: 20250701-honeyhive-solution:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: REDIS_URL
+          value: "redis://redis-service:6379"
+        - name: OPENROUTER_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: llm-evaluation-secrets
+              key: openrouter-api-key
+        envFrom:
+        - configMapRef:
+            name: llm-evaluation-config
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 5
+          failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+            - ALL
+
+---
+# application service
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-evaluation-service
+  namespace: 20250701-honeyhive-solution
+  labels:
+    app: llm-evaluation-service
+spec:
+  selector:
+    app: llm-evaluation-service
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 8000
+  type: ClusterIP
