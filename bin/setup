@@ -1,4 +1,11 @@
 #!/bin/bash
+set -euo pipefail
+
+(
+  cd $REPO
+  brew bundle
+  mise install
+)
 
 (
   cd $REPO/src
