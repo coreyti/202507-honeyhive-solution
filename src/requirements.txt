@@ -3,6 +3,7 @@ asyncio-throttle==1.0.2
 fastapi==0.115.14
 prometheus-client==0.22.1
 pydantic==2.11.7
+pydantic-settings==2.10.1
 python-multipart==0.0.20
 redis==6.2.0
 structlog==25.4.0

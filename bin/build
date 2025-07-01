@@ -1,0 +1,9 @@
+#!/bin/bash
+set -euo pipefail
+
+# Build the Docker image
+podman build \
+  -f "${REPO}/etc/Dockerfile" \
+  -t 2025-0701-honeyhive-solution:latest \
+  --format "docker" \
+  "${REPO}"

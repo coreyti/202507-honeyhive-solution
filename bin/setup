@@ -1,6 +1,6 @@
 #!/bin/bash
 
 (
-  cd $REPO
+  cd $REPO/src
   pip install -r requirements.txt
 )
