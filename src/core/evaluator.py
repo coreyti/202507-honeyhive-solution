@@ -39,7 +39,7 @@ class EvaluationEngine:
 
     async def evaluate(self, input_text: str, output_text: str, criteria: str) -> EvaluationResult:
         """Evaluate LLM output against criteria"""
-        EVALUATION_COUNT.inc()
+        EVALUATION_COUNT.labels(provider='unknown', status='started').inc()
         
         try:
             # Acquire rate limit token
@@ -51,11 +51,14 @@ class EvaluationEngine:
                 input_text, output_text, criteria
             )
             
-            EVALUATION_DURATION.observe(1.0)  # This would be actual duration
+            # Record successful evaluation
+            EVALUATION_COUNT.labels(provider=result.provider, status='success').inc()
+            EVALUATION_DURATION.labels(provider=result.provider).observe(1.0)  # This would be actual duration
             return result
             
         except Exception as e:
             self.logger.error("Evaluation failed", error=str(e))
+            EVALUATION_COUNT.labels(provider='unknown', status='error').inc()
             raise EvaluationError(f"Failed to evaluate: {str(e)}")
 
     async def _perform_evaluation(self, input_text: str, output_text: str, criteria: str) -> EvaluationResult:

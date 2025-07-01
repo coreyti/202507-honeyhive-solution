@@ -20,7 +20,7 @@ async def evaluate_llm_output(
     start_time = time.time()
     
     try:
-        REQUEST_COUNT.inc()
+        REQUEST_COUNT.labels(method='POST', endpoint='/evaluate').inc()
         
         result = await evaluation_engine.evaluate(
             input_text=request.input,
@@ -29,7 +29,7 @@ async def evaluate_llm_output(
         )
         
         evaluation_time_ms = int((time.time() - start_time) * 1000)
-        REQUEST_DURATION.observe(time.time() - start_time)
+        REQUEST_DURATION.labels(method='POST', endpoint='/evaluate').observe(time.time() - start_time)
         
         return EvaluationResponse(
             success=True,

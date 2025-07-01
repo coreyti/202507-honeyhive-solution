@@ -1,0 +1,12 @@
+#!/bin/bash
+set -euo pipefail
+
+# Apply all kubernetes manifests
+kubectl apply -f "${REPO}/etc/k8s/"
+
+# Wait for the deployment to be ready
+kubectl wait --for=condition=available --timeout=300s deployment/redis -n 20250701-honeyhive-solution
+kubectl wait --for=condition=available --timeout=300s deployment/llm-evaluation-service -n 20250701-honeyhive-solution
+
+# Forward the port
+kubectl port-forward service/llm-evaluation-service 8080:80 -n 20250701-honeyhive-solution

@@ -18,12 +18,8 @@ class ProviderPool:
         # Free models available on OpenRouter
         provider_configs = [
             {
-                "model": "mistralai/mistral-small-3.2-24b",
+                "model": "mistralai/mistral-small-3.2-24b-instruct:free",
                 "display_name": "Mistral Small 3.2 24B"
-            },
-            {
-                "model": "deepseek/deepseek-r1-0528:free", 
-                "display_name": "DeepSeek R1 0528"
             },
             {
                 "model": "meta-llama/llama-4-scout:free",

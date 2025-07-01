@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euo pipefail
+
+response=$(curl -s -w "%{http_code}" -X POST \
+  -H "Content-Type: application/json" \
+  -d @lib/test/payload.json \
+  http://localhost:8080/evaluate)
+
+http_code="${response: -3}"
+response_body="${response%???}"
+
+if [ "$http_code" = "200" ]; then
+    echo "✅ Evaluation test passed"
+    echo "Response: $response_body" | jq .
+else
+    echo "❌ Evaluation test failed (HTTP $http_code)"
+    echo "Response: $response_body"
+    exit 1
+fi

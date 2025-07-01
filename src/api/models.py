@@ -18,12 +18,15 @@ class EvaluationRequest(BaseModel):
     output: str = Field(..., min_length=1, max_length=1048576, description="Output text to evaluate")
     criteria: str = Field(..., min_length=1, max_length=1048576, description="Evaluation criteria")
     
+    # NB: this is not technically correct. The validation here is considering each field
+    #     separately, but we should be considering the total size of the payload.
+
     @validator('input', 'output', 'criteria')
     def validate_size(cls, v):
-        if len(v.encode('utf-8')) < 1024:
-            raise ValueError('Payload must be at least 1KB')
+        if len(v.encode('utf-8')) < 1:
+            raise ValueError(f'Payload field, {cls}, must be at least 1B, but was {len(v.encode("utf-8"))} bytes')
         if len(v.encode('utf-8')) > 1048576:
-            raise ValueError('Payload must not exceed 1MB')
+            raise ValueError(f'Payload field, {cls}, must not exceed 1MB, but was {len(v.encode("utf-8"))} bytes')
         return v
 
 class EvaluationResponse(BaseModel):
